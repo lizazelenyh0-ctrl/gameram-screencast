@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gameram — Screencast 1920</title>
+  <style>
+    :root{--light:#f8faff;--dark:#080720;--purple:#a855f7;--cyan:#06b6d4;--yellow:#fde047;--text:#1e1b4b}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--light);font-family:'Segoe UI',Arial,sans-serif;overflow-x:hidden}
+    body.dark{background:var(--dark)}
+    button{font:inherit}
+    #viewport{position:relative;width:100%;overflow:hidden}
+    #stage{position:relative;width:1920px;transform-origin:0 0;will-change:transform}
+    #screen{display:block;width:1920px;height:auto;user-select:none;-webkit-user-drag:none;pointer-events:none}
+    #hotspots{position:absolute;inset:0;pointer-events:none}
+    .hotspot{position:absolute;border:0;background:transparent;padding:0;margin:0;pointer-events:auto;cursor:pointer;border-radius:12px;outline:none;transition:background .12s ease,box-shadow .12s ease,transform .08s ease}
+    .hotspot:hover{background:rgba(168,85,247,.055);box-shadow:inset 0 0 0 1.5px rgba(168,85,247,.28)}
+    body.dark .hotspot:hover{background:rgba(255,255,255,.035);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.18)}
+    .hotspot:active{transform:scale(.985);background:rgba(168,85,247,.10)}
+    .hotspot[data-kind='theme']{border-radius:12px}
+    .hotspot[data-kind='nav']{border-radius:6px}
+    .hotspot[data-kind='sidebar']{border-radius:10px}
+    .hotspot[data-kind='deck']{border-radius:24px}
+    .state-overlay{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#22c55e;color:#fff;font-family:'Segoe UI',Arial,sans-serif;font-size:14px;font-weight:600;pointer-events:none;box-shadow:0 10px 28px rgba(34,197,94,.22);animation:stateIn .22s ease both}
+    @keyframes stateIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+    #transition{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:50;pointer-events:none;opacity:0;transition:opacity .18s ease;background:linear-gradient(90deg,transparent 0,transparent min(19.55vw,375px),rgba(248,250,255,.88) min(19.55vw,375px),rgba(248,250,255,.88) 100%)}
+    body.dark #transition{background:linear-gradient(90deg,transparent 0,transparent min(19.55vw,375px),rgba(8,7,32,.86) min(19.55vw,375px),rgba(8,7,32,.86) 100%)}
+    #transition.on{opacity:1}
+    #boot{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:#f8faff;color:#1e1b4b;transition:opacity .35s ease,visibility .35s ease}
+    body.dark #boot{background:#080720;color:#e5e7ff}
+    #boot.hide{opacity:0;visibility:hidden}
+    .loader{display:flex;align-items:center;gap:14px;font-family:'Segoe UI',Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+    .loader-pixels{display:grid;grid-template-columns:repeat(3,7px);gap:4px}
+    .loader-pixels i{width:7px;height:7px;background:var(--purple);animation:pulse .75s ease-in-out infinite alternate}
+    .loader-pixels i:nth-child(2){animation-delay:.12s}.loader-pixels i:nth-child(3){animation-delay:.24s}.loader-pixels i:nth-child(4){animation-delay:.36s}.loader-pixels i:nth-child(5){animation-delay:.48s}.loader-pixels i:nth-child(6){animation-delay:.60s}
+    @keyframes pulse{from{opacity:.25;transform:scale(.72)}to{opacity:1;transform:scale(1)}}
+    #toast{position:fixed;right:32px;bottom:32px;z-index:200;min-width:260px;max-width:420px;padding:14px 18px;border-radius:14px;background:#1e1b4b;color:#fff;font-family:'Segoe UI',Arial,sans-serif;font-size:14px;box-shadow:0 18px 55px rgba(30,27,75,.28);opacity:0;transform:translateY(12px);pointer-events:none;transition:.2s ease}
+    body.dark #toast{background:#e5e7ff;color:#1a1038}
+    #toast.show{opacity:1;transform:none}
+    #drawer{position:fixed;top:0;right:0;width:420px;height:100vh;z-index:250;background:#fff;border-left:1px solid #ded9f0;box-shadow:-24px 0 70px rgba(30,27,75,.16);transform:translateX(104%);transition:transform .28s cubic-bezier(.2,.8,.2,1);padding:28px;color:#1e1b4b;font-family:'Segoe UI',Arial,sans-serif}
+    body.dark #drawer{background:#1a1038;border-color:#3c2c67;color:#e5e7ff}
+    #drawer.open{transform:none}
+    .drawer-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.drawer-head h3{margin:0;font-family:'Segoe UI',Arial,sans-serif;font-size:34px;font-weight:600}.drawer-close{border:0;background:transparent;font-size:24px;color:inherit;cursor:pointer}
+    .chat-bubble{margin-top:28px;border-radius:16px;background:#f3f0ff;padding:14px 16px;color:#5d587c;line-height:1.45}.dark .chat-bubble{background:#24174b;color:#b9b6d3}
+    .drawer-input{position:absolute;left:28px;right:28px;bottom:28px;display:flex;gap:10px}.drawer-input input{height:46px;flex:1;border:1px solid #ded9f0;border-radius:12px;padding:0 14px;background:transparent;color:inherit}.drawer-input button{height:46px;border:0;border-radius:12px;padding:0 18px;background:var(--purple);color:#fff;font-weight:600;cursor:pointer}
+    #modalBackdrop{position:fixed;inset:0;z-index:230;background:rgba(8,7,32,.36);display:none;place-items:center}.modal{width:480px;border-radius:24px;background:#fff;padding:28px;color:#1e1b4b;box-shadow:0 25px 80px rgba(8,7,32,.25);font-family:'Segoe UI',Arial,sans-serif}.dark .modal{background:#1a1038;color:#e5e7ff}.modal h3{margin:0 0 8px;font-family:'Segoe UI',Arial,sans-serif;font-size:34px}.modal p{margin:0 0 20px;color:#817b9f}.modal input{width:100%;height:48px;border:1px solid #ded9f0;border-radius:12px;padding:0 14px;margin-bottom:14px;background:transparent;color:inherit}.modal .row{display:flex;gap:10px;justify-content:flex-end}.modal button{height:44px;border-radius:12px;border:0;padding:0 18px;font-weight:600;cursor:pointer}.modal .primary{background:var(--purple);color:#fff}.modal .soft{background:#ede9ff;color:#1e1b4b}
+  </style>
+</head>
+<body>
+<div id="boot"><div class="loader"><span class="loader-pixels"><i></i><i></i><i></i><i></i><i></i><i></i></span>Gameram</div></div>
+<div id="viewport"><div id="stage"><img id="screen" alt="Gameram"><div id="hotspots"></div></div></div>
+<div id="transition"></div>
+<div id="toast"></div>
+<aside id="drawer"><div class="drawer-head"><h3>СООБЩЕНИЯ</h3><button class="drawer-close" id="drawerClose">×</button></div><div class="chat-bubble">MiraFox · в сети<br><br>Привет! Да, я сегодня играю после 20:00. Можем собрать пати 👾</div><div class="drawer-input"><input value="Давай, я как раз свободна после восьми"><button id="sendMessage">Отправить</button></div></aside>
+<div id="modalBackdrop"><div class="modal"><h3 id="modalTitle">Готово</h3><p id="modalText"></p><input id="modalInput" placeholder="Название"><div class="row"><button class="soft" id="modalCancel">Отмена</button><button class="primary" id="modalOk">Продолжить</button></div></div></div>
+<script>
+const SCREENS={
+  home:{height:4874,light:'assets/home-light.png',dark:'assets/home-dark.png'},
+  players:{height:1839,light:'assets/players-light.png',dark:'assets/players-dark.png'},
+  games:{height:3698,light:'assets/games-light.png',dark:'assets/games-dark.png'},
+  communities:{height:3112,light:'assets/communities-light.png',dark:'assets/communities-dark.png'},
+  profile:{height:2997,light:'assets/profile-light.png',dark:'assets/profile-dark.png'},
+  auth:{height:1080,light:'assets/auth-light.png',dark:'assets/auth-dark.png'}
+};
+const COMMON=[
+  {name:'logo',x:104,y:19.5,w:131,h:33,kind:'nav',action:'home'},
+  {name:'headerPlayers',x:267,y:18,w:116,h:36,kind:'nav',action:'players'},
+  {name:'headerGames',x:399,y:16,w:64,h:40,kind:'nav',action:'games'},
+  {name:'headerCommunities',x:463,y:16,w:128,h:40,kind:'nav',action:'communities'},
+  {name:'theme',x:1656,y:16,w:40,h:40,kind:'theme',action:'theme'},
+  {name:'headerProfile',x:1704,y:16,w:112,h:40,kind:'nav',action:'profile'},
+  {name:'sideProfile',x:103,y:175,w:252,h:44,kind:'sidebar',action:'profile'},
+  {name:'sideFeed',x:103,y:227,w:252,h:44,kind:'sidebar',action:'home'},
+  {name:'sideGames',x:103,y:279,w:252,h:44,kind:'sidebar',action:'games'},
+  {name:'sideFriends',x:103,y:331,w:252,h:44,kind:'sidebar',action:'toast:Раздел «Друзья» работает в полной версии'},
+  {name:'sideMessages',x:103,y:383,w:252,h:44,kind:'sidebar',action:'chat'},
+  {name:'sideAchievements',x:103,y:435,w:252,h:44,kind:'sidebar',action:'toast:Достижения уже есть в профиле'},
+  {name:'sideSettings',x:103,y:487,w:252,h:44,kind:'sidebar',action:'toast:Настройки открыты'}
+];
+const PAGE={
+  home:[
+    {x:484,y:456,w:220,h:54,kind:'button',action:'players'},
+    {x:716,y:456,w:258,h:54,kind:'button',action:'scroll:760'},
+    {x:1250,y:492,w:434,h:48,kind:'button',action:'state:Задание выполнено ✓'},
+    {x:1604.69,y:842.5,w:87.02,h:42.24,kind:'button',action:'chat'},
+    {x:1012,y:2661,w:244,h:48,kind:'button',action:'state:Вы в команде ✓'},
+    {x:1012,y:2719,w:244,h:48,kind:'button',action:'chat'},
+    {x:1332,y:4357.5,w:388,h:54,kind:'button',action:'players'}
+  ],
+  players:[
+    {x:1332,y:218.5,w:194,h:56,kind:'button',action:'state:Игроки'},
+    {x:1530,y:218.5,w:194,h:56,kind:'button',action:'state:Команды'},
+    {x:444,y:1057,w:267,h:52,kind:'button',action:'toast:Фильтры применены · 24 совпадения'},
+    {x:444,y:1125,w:267,h:36,kind:'button',action:'toast:Фильтры сброшены'},
+    {x:759,y:485,w:560,h:820,kind:'deck',action:'toast:Предыдущая анкета'},
+    {x:877,y:485,w:560,h:820,kind:'deck',action:'toast:Следующая анкета'},
+    {x:1206,y:1163,w:168,h:46,kind:'button',action:'profile'},
+    {x:822,y:1218,w:56,h:56,kind:'button',action:'toast:Анкета пропущена'},
+    {x:890,y:1218,w:416,h:56,kind:'button',action:'state:Запрос отправлен ✓'}
+  ],
+  games:[
+    {x:1434,y:370,w:280,h:52,kind:'button',action:'players'},
+    {x:1434,y:432,w:280,h:52,kind:'button',action:'toast:Открыта карточка Valorant'},
+    {x:456,y:2076,w:240,h:52,kind:'button',action:'toast:Показаны остальные игры'},
+    {x:476,y:2600,w:384,h:48,kind:'button',action:'state:Вы присоединились ✓'},
+    {x:918,y:2566,w:372,h:48,kind:'button',action:'state:Вы присоединились ✓'},
+    {x:1348,y:2566,w:372,h:48,kind:'button',action:'state:Вы присоединились ✓'}
+  ],
+  communities:[
+    {x:452,y:394,w:218,h:52,kind:'button',action:'scroll:770'},
+    {x:682,y:394,w:230,h:52,kind:'button',action:'modal:Создать сообщество'},
+    {x:946,y:1120,w:150,h:52,kind:'button',action:'state:Вы вступили ✓'},
+    {x:422,y:1684,w:409,h:44,kind:'button',action:'state:Вы вступили ✓'},
+    {x:915.33,y:1684,w:409,h:44,kind:'button',action:'state:Вы вступили ✓'},
+    {x:1408.66,y:1684,w:409,h:44,kind:'button',action:'state:Вы вступили ✓'},
+    {x:448,y:2012,w:208,h:52,kind:'button',action:'toast:Подобрали 8 сообществ'},
+    {x:432,y:2462,w:196,h:48,kind:'button',action:'toast:Обсуждение открыто'},
+    {x:1680,y:2256,w:116,h:40,kind:'button',action:'state:Вы в событии ✓'},
+    {x:1680,y:2428,w:116,h:40,kind:'button',action:'chat'},
+    {x:1594,y:2722,w:218,h:52,kind:'button',action:'modal:Создать сообщество'}
+  ],
+  profile:[
+    {x:720,y:349.5,w:160,h:52,kind:'button',action:'chat'},
+    {x:892,y:349.5,w:220,h:52,kind:'button',action:'state:Запрос отправлен ✓'},
+    {x:1348,y:379.5,w:352,h:52,kind:'button',action:'state:Вы в группе ✓'},
+    {x:1328,y:2468.5,w:400,h:52,kind:'button',action:'chat'},
+    {x:1328,y:2532.5,w:400,h:52,kind:'button',action:'state:Запрос отправлен ✓'}
+  ],
+  auth:[
+    {x:1710,y:18,w:90,h:44,kind:'button',action:'toast:Режим входа'},
+    {x:1336,y:310,w:240,h:44,kind:'button',action:'toast:Регистрация'},
+    {x:1576,y:310,w:240,h:44,kind:'button',action:'toast:Вход'},
+    {x:1332,y:780,w:488,h:56,kind:'button',action:'home'}
+  ]
+};
+let route='home';
+let theme='light';
+const screen=document.getElementById('screen');
+const stage=document.getElementById('stage');
+const viewport=document.getElementById('viewport');
+const hotspots=document.getElementById('hotspots');
+const transition=document.getElementById('transition');
+const boot=document.getElementById('boot');
+const toastEl=document.getElementById('toast');
+const drawer=document.getElementById('drawer');
+const modalBackdrop=document.getElementById('modalBackdrop');
+let toastTimer;
+function fit(){const s=Math.min(1,window.innerWidth/1920);stage.style.transform=`scale(${s})`;stage.style.height=SCREENS[route].height+'px';viewport.style.height=(SCREENS[route].height*s)+'px';}
+window.addEventListener('resize',fit);
+function pct(v,base){return (v/base*100)+'%'}
+function renderHotspots(){
+  hotspots.innerHTML='';
+  const items=route==='auth'?[...PAGE.auth]:[...COMMON,...(PAGE[route]||[])];
+  const H=SCREENS[route].height;
+  for(const item of items){
+    const b=document.createElement('button');
+    b.className='hotspot';
+    b.dataset.kind=item.kind||'button';
+    b.style.left=pct(item.x,1920);b.style.top=pct(item.y,H);b.style.width=pct(item.w,1920);b.style.height=pct(item.h,H);
+    b.setAttribute('aria-label',item.name||item.action);
+    b.addEventListener('click',()=>act(item,b));
+    hotspots.appendChild(b);
+  }
+}
+function clearStates(){hotspots.querySelectorAll('.state-overlay').forEach(x=>x.remove())}
+function stateOverlay(item,text){
+  const el=document.createElement('div');el.className='state-overlay';
+  el.textContent=text;
+  el.style.left=pct(item.x,1920);el.style.top=pct(item.y,SCREENS[route].height);el.style.width=pct(item.w,1920);el.style.height=pct(item.h,SCREENS[route].height);
+  hotspots.appendChild(el);
+}
+function toast(msg){clearTimeout(toastTimer);toastEl.textContent=msg;toastEl.classList.add('show');toastTimer=setTimeout(()=>toastEl.classList.remove('show'),1800)}
+function navigate(next){if(!SCREENS[next]||next===route)return;transition.classList.add('on');setTimeout(()=>{route=next;window.scrollTo({top:0,behavior:'instant'});render(false);requestAnimationFrame(()=>setTimeout(()=>transition.classList.remove('on'),55));},120)}
+function switchTheme(){transition.classList.add('on');setTimeout(()=>{theme=theme==='light'?'dark':'light';document.body.classList.toggle('dark',theme==='dark');screen.src=SCREENS[route][theme];setTimeout(()=>transition.classList.remove('on'),90);},110)}
+function act(item){
+  const a=item.action||'';
+  if(a==='theme')return switchTheme();
+  if(SCREENS[a])return navigate(a);
+  if(a==='chat'){drawer.classList.add('open');return}
+  if(a.startsWith('toast:'))return toast(a.slice(6));
+  if(a.startsWith('state:')){stateOverlay(item,a.slice(6));toast(a.slice(6));return}
+  if(a.startsWith('scroll:')){const y=Number(a.slice(7));window.scrollTo({top:y*stage.getBoundingClientRect().width/1920,behavior:'smooth'});return}
+  if(a.startsWith('modal:')){openModal(a.slice(6));return}
+}
+function render(first){
+  const src=SCREENS[route][theme];
+  stage.style.height=SCREENS[route].height+'px';
+  screen.style.height=SCREENS[route].height+'px';
+  screen.src=src;
+  screen.onload=()=>{renderHotspots();fit();if(first)setTimeout(()=>boot.classList.add('hide'),120)};
+  if(screen.complete){renderHotspots();fit();if(first)setTimeout(()=>boot.classList.add('hide'),120)}
+}
+function openModal(title){document.getElementById('modalTitle').textContent=title;document.getElementById('modalText').textContent='Демонстрационное действие для скринкаста. Интерфейс остаётся в системе Gameram.';modalBackdrop.style.display='grid';document.getElementById('modalInput').value=''}
+document.getElementById('drawerClose').onclick=()=>drawer.classList.remove('open');
+document.getElementById('sendMessage').onclick=()=>{toast('Сообщение отправлено');drawer.classList.remove('open')};
+document.getElementById('modalCancel').onclick=()=>modalBackdrop.style.display='none';
+document.getElementById('modalOk').onclick=()=>{modalBackdrop.style.display='none';toast('Готово')};
+modalBackdrop.addEventListener('click',e=>{if(e.target===modalBackdrop)modalBackdrop.style.display='none'});
+for(const v of Object.values(SCREENS))for(const t of ['light','dark']){const i=new Image();i.src=v[t]}
+render(true);
+</script>
+</body>
+</html>
