@@ -34,3 +34,5 @@ function App(){
   return <><div id="viewport" style={{height:4874*scale}}><div className="canvas" style={{transform:`scale(${scale})`}}><Home1920Light/></div></div><div className={'toast '+(toast?'show':'')}>{toast}</div></>;
 }
 createRoot(document.getElementById('root')).render(<App/>);
+
+// trigger Pages build
