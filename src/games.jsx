@@ -23,16 +23,10 @@ const imgIconAchievements = import.meta.env.BASE_URL + "assets/games-imgIconAchi
 const imgIconSettings = import.meta.env.BASE_URL + "assets/games-imgIconSettings.svg";
 const imgOnlineDot = import.meta.env.BASE_URL + "assets/games-imgOnlineDot.svg";
 
-type MoodPillGamesPageProps = {
-  className?: string;
-  label?: string;
-  state?: "Default" | "Selected";
-};
-
-function MoodPillGamesPage({ className, label = "ХОЧУ ПОСОРЕВНОВАТЬСЯ", state = "Default" }: MoodPillGamesPageProps) {
+function MoodPillGamesPage({ className, label = "ХОЧУ ПОСОРЕВАТЬСЯ", state = "Default" }) {
   const isSelected = state === "Selected";
   return (
-    <div className={className || `content-stretch flex h-[80px] items-center justify-center overflow-clip px-[24px] py-[20px] relative rounded-[16px] w-[412px] ${isSelected ? "bg-gradient-to-r from-[#a855f7] to-[#22d3ee]" : "bg-[var(--background-subtle,#ede9ff)]"}`} id={isSelected ? "node-297_281" : "node-297_279"}>
+    <div className={className || `gaMoodPill ${isSelected ? "gaMoodPillSelected" : "gaMoodPillDefault"}`} id={isSelected ? "node-297_281" : "node-297_279"}>
       {state === "Default" && (
         <div className="ga0" data-node-id="297:280">
           <p className="ga1">{label}</p>
