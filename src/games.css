@@ -167,3 +167,7 @@
 .ga166{position:relative;flex-shrink:0;color:var(--accent-cyan,#22d3ee);width:79px}
 .ga167{opacity:0.72;position:relative;flex-shrink:0;color:var(--text-on-accent,white);width:216px}
 .ga168{background-color:var(--surface-primary,white);border-color:var(--border-default,#ded9f0);border-bottom-width:1px;border-style:solid;align-content:stretch;display:flex;height:72px;align-items:center;overflow:clip;padding-left:104px;padding-right:104px;position:relative;width:1920px}
+
+.gaMoodPill{align-content:stretch;display:flex;height:80px;align-items:center;justify-content:center;overflow:clip;padding:20px 24px;position:relative;border-radius:16px;width:412px}
+.gaMoodPillSelected{background-image:linear-gradient(to right,#a855f7 0%,#22d3ee 100%)}
+.gaMoodPillDefault{background-color:var(--background-subtle,#ede9ff)}
