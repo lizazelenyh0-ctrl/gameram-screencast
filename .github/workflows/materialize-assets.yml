@@ -1,0 +1,51 @@
+name: Materialize Figma assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/materialize-assets.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  download-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download exact Figma screen exports
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/assets
+          curl --fail --location --retry 3 --output docs/assets/home-light.png 'https://www.figma.com/api/mcp/asset/5e1ec424-bbb6-49b5-b615-6f2370a3e95c.png'
+          curl --fail --location --retry 3 --output docs/assets/players-light.png 'https://www.figma.com/api/mcp/asset/c542cf8e-ff0f-43d3-b104-87804ea946c7.png'
+          curl --fail --location --retry 3 --output docs/assets/games-light.png 'https://www.figma.com/api/mcp/asset/e039c162-e97b-4546-90c3-e564e840a986.png'
+          curl --fail --location --retry 3 --output docs/assets/communities-light.png 'https://www.figma.com/api/mcp/asset/4b1dc384-708b-422e-90c1-cb5bce913085.png'
+          curl --fail --location --retry 3 --output docs/assets/profile-light.png 'https://www.figma.com/api/mcp/asset/74e079cf-1ed2-4e1c-a19f-c1f5e740b788.png'
+          curl --fail --location --retry 3 --output docs/assets/auth-light.png 'https://www.figma.com/api/mcp/asset/5dc4f7ce-a89d-443a-923b-28a04a9645df.png'
+          curl --fail --location --retry 3 --output docs/assets/home-dark.png 'https://www.figma.com/api/mcp/asset/92d8dc6c-c398-4c6a-829f-49f28af49f9f.png'
+          curl --fail --location --retry 3 --output docs/assets/players-dark.png 'https://www.figma.com/api/mcp/asset/7fdf7d11-ab29-4e86-9471-a671dae39b72.png'
+          curl --fail --location --retry 3 --output docs/assets/games-dark.png 'https://www.figma.com/api/mcp/asset/accc8a8c-5e41-4068-b804-01ff366e05d6.png'
+          curl --fail --location --retry 3 --output docs/assets/communities-dark.png 'https://www.figma.com/api/mcp/asset/df31eb6f-5593-4c7f-aeec-8ed15d64435b.png'
+          curl --fail --location --retry 3 --output docs/assets/profile-dark.png 'https://www.figma.com/api/mcp/asset/6dd030a2-de89-4d8b-945a-22fa0a2af602.png'
+          curl --fail --location --retry 3 --output docs/assets/auth-dark.png 'https://www.figma.com/api/mcp/asset/b9ea6b8a-b8af-4c33-b1ae-f3b7cda60480.png'
+          touch docs/.nojekyll
+
+      - name: Commit downloaded assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'gameram-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add docs/assets docs/.nojekyll
+          if git diff --cached --quiet; then
+            echo 'No asset changes'
+            exit 0
+          fi
+          git commit -m 'Materialize exact Figma screen assets'
+          git push
