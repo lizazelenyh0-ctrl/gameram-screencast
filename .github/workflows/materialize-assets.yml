@@ -1,51 +1,67 @@
-name: Materialize Figma assets
-
+name: Build Gameram site
 on:
   push:
     branches: [main]
     paths:
+      - 'src/**'
+      - 'index.html'
+      - 'package.json'
+      - 'vite.config.js'
       - '.github/workflows/materialize-assets.yml'
   workflow_dispatch:
-
 permissions:
   contents: write
-
 jobs:
-  download-assets:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Download exact Figma screen exports
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Download exact Figma assets
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p docs/assets
-          curl --fail --location --retry 3 --output docs/assets/home-light.png 'https://www.figma.com/api/mcp/asset/5e1ec424-bbb6-49b5-b615-6f2370a3e95c.png'
-          curl --fail --location --retry 3 --output docs/assets/players-light.png 'https://www.figma.com/api/mcp/asset/c542cf8e-ff0f-43d3-b104-87804ea946c7.png'
-          curl --fail --location --retry 3 --output docs/assets/games-light.png 'https://www.figma.com/api/mcp/asset/e039c162-e97b-4546-90c3-e564e840a986.png'
-          curl --fail --location --retry 3 --output docs/assets/communities-light.png 'https://www.figma.com/api/mcp/asset/4b1dc384-708b-422e-90c1-cb5bce913085.png'
-          curl --fail --location --retry 3 --output docs/assets/profile-light.png 'https://www.figma.com/api/mcp/asset/74e079cf-1ed2-4e1c-a19f-c1f5e740b788.png'
-          curl --fail --location --retry 3 --output docs/assets/auth-light.png 'https://www.figma.com/api/mcp/asset/5dc4f7ce-a89d-443a-923b-28a04a9645df.png'
-          curl --fail --location --retry 3 --output docs/assets/home-dark.png 'https://www.figma.com/api/mcp/asset/92d8dc6c-c398-4c6a-829f-49f28af49f9f.png'
-          curl --fail --location --retry 3 --output docs/assets/players-dark.png 'https://www.figma.com/api/mcp/asset/7fdf7d11-ab29-4e86-9471-a671dae39b72.png'
-          curl --fail --location --retry 3 --output docs/assets/games-dark.png 'https://www.figma.com/api/mcp/asset/accc8a8c-5e41-4068-b804-01ff366e05d6.png'
-          curl --fail --location --retry 3 --output docs/assets/communities-dark.png 'https://www.figma.com/api/mcp/asset/df31eb6f-5593-4c7f-aeec-8ed15d64435b.png'
-          curl --fail --location --retry 3 --output docs/assets/profile-dark.png 'https://www.figma.com/api/mcp/asset/6dd030a2-de89-4d8b-945a-22fa0a2af602.png'
-          curl --fail --location --retry 3 --output docs/assets/auth-dark.png 'https://www.figma.com/api/mcp/asset/b9ea6b8a-b8af-4c33-b1ae-f3b7cda60480.png'
+          mkdir -p public/assets
+          curl --fail --location --retry 3 --output public/assets/imgBrandOfficialGameramLogo.svg 'https://www.figma.com/api/mcp/asset/472e8934-cf40-4d51-93f2-85c0129c3f9b.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconSearch.svg 'https://www.figma.com/api/mcp/asset/8e8815b7-006d-4d90-9da5-63a3c889eac2.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconMessages.svg 'https://www.figma.com/api/mcp/asset/4493f5ae-e7d8-4fd6-909c-db25ef7cc3ca.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconNotifications.svg 'https://www.figma.com/api/mcp/asset/6df70921-64de-4b55-a9bd-f97553a1f7be.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconThemeToggle.svg 'https://www.figma.com/api/mcp/asset/8633fa6e-3bd7-4fab-8bc8-2115511e1f50.svg'
+          curl --fail --location --retry 3 --output public/assets/imgAvatarPlaceholder.png 'https://www.figma.com/api/mcp/asset/8fd4f96b-2e7a-42ab-8fe3-d5a8967bc833.png'
+          curl --fail --location --retry 3 --output public/assets/imgAvatarPlaceholder1.png 'https://www.figma.com/api/mcp/asset/8f530ddd-7db5-4479-94a9-81233e150851.png'
+          curl --fail --location --retry 3 --output public/assets/imgAvatarPlaceholder2.png 'https://www.figma.com/api/mcp/asset/24cac108-cb6b-4469-b1ee-e89fd5916ae5.png'
+          curl --fail --location --retry 3 --output public/assets/imgMediaMinecraft.png 'https://www.figma.com/api/mcp/asset/7f42f31d-8c84-4ba8-8d90-ccb707578d69.png'
+          curl --fail --location --retry 3 --output public/assets/imgMediaMinecraft1.png 'https://www.figma.com/api/mcp/asset/ef2c1560-4b16-4bc2-992e-080d1c147bd7.png'
+          curl --fail --location --retry 3 --output public/assets/imgMediaMinecraft2.png 'https://www.figma.com/api/mcp/asset/bee103ab-801f-4780-a3a3-e08adfeb5763.png'
+          curl --fail --location --retry 3 --output public/assets/imgMediaMinecraft3.png 'https://www.figma.com/api/mcp/asset/e002fb58-8752-4f56-80a9-4ce4d0c76210.png'
+          curl --fail --location --retry 3 --output public/assets/imgMediaRobloxDoors.png 'https://www.figma.com/api/mcp/asset/eddbf725-3c1e-4f59-9bdd-3d7586ca77ae.png'
+          curl --fail --location --retry 3 --output public/assets/imgMediaStandoffClip.png 'https://www.figma.com/api/mcp/asset/b302412f-2fb4-41dc-8024-1d301a811786.png'
+          curl --fail --location --retry 3 --output public/assets/imgRankIconPlaceholder.png 'https://www.figma.com/api/mcp/asset/ee2f2a6c-5bd8-4d40-a1ed-c503c35c5955.png'
+          curl --fail --location --retry 3 --output public/assets/imgGroup.svg 'https://www.figma.com/api/mcp/asset/90365691-c506-4cb6-b5fb-36c92f398af0.svg'
+          curl --fail --location --retry 3 --output public/assets/imgGroup1.svg 'https://www.figma.com/api/mcp/asset/20c210f9-9e1c-4810-a8d4-f6894d9e0f0b.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconProfile.svg 'https://www.figma.com/api/mcp/asset/5755cf9e-04ad-4d71-873a-d827e2e744a8.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconFeed.svg 'https://www.figma.com/api/mcp/asset/e48a9cd1-9103-4692-b601-04deae29b474.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconMyGames.svg 'https://www.figma.com/api/mcp/asset/605b6fdc-40b7-4ac9-97ae-a2154136785a.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconFriends.svg 'https://www.figma.com/api/mcp/asset/98c69bc9-966f-4f74-963b-ce6bcdd9624e.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconMessages1.svg 'https://www.figma.com/api/mcp/asset/8b128a76-a514-484d-8ad1-63cb3453ec4b.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconAchievements.svg 'https://www.figma.com/api/mcp/asset/406b8618-2460-46b1-aa1b-b17b2f9b1daf.svg'
+          curl --fail --location --retry 3 --output public/assets/imgIconSettings.svg 'https://www.figma.com/api/mcp/asset/0ca40746-575d-4cb8-a74f-b4b21e495c28.svg'
+      - name: Install and build
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install
+          npm run build
           touch docs/.nojekyll
-
-      - name: Commit downloaded assets
+      - name: Commit built Pages site
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'gameram-bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add docs/assets docs/.nojekyll
-          if git diff --cached --quiet; then
-            echo 'No asset changes'
-            exit 0
-          fi
-          git commit -m 'Materialize exact Figma screen assets'
+          git add docs
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Build real DOM Home from Figma'
           git push
